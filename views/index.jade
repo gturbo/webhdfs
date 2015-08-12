@@ -1,0 +1,18 @@
+extends layout
+
+block content
+	#main
+		#menu
+			h1= title
+			ul
+				#list list input directory
+				#other not implemented
+			br
+			h1 paramètres
+			.param
+				.lbl path:
+				input(type='text',id='path',value='#{path}') 
+		#result
+			h1 réponse
+			#response 
+				h2 sélectionnez une opération
