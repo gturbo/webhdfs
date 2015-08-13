@@ -40,4 +40,25 @@ $(function () {
 	});
 });
 
+	$('#upload').click(function(e) {
+	$.ajax({
+		type:'POST',
+		url : 'upload/' + locPath.value,
+		success : function (files) {
+			var txt="UPLOADED FILES:<br>";
+			$.each(files, function(i,f){
+				txt+="<strong>" + f	+ "</strong><br>";
+			})
+			response.html(txt);
+		},
+		contentType: 'application/json',
+		data: JSON.stringify({
+			path: path.value
+		}),
+		error : function (xhr, type) {
+			response.html('<h1>error in request see console</h1>');
+		}
+	});
+});
+
 })

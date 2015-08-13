@@ -17,13 +17,17 @@ var baseOptions = {
 }
 
 var hdfs = function (options, callback) {
+	options=extend(baseOptions, options);
 	console.log('options: \n' + util.inspect(options));
-	return request(extend(baseOptions, options), function (e, r, b) {
+	if (callback)
+		request(options, function (e, r, b) {
 		if (e) {
 			console.log(e);
 		}
 		callback(r, b, e);
 	});
+	else 
+		return request(options);
 }
 
 // list distant directory through webhdfs query
@@ -46,11 +50,9 @@ router.get(/^\/list\/*(.*)?$/, function (req, res, next) {
 	});
 });
 
-// list local directory
-router.get(/^\/loc-list\/*(.*)?$/, function (req, res, next) {
-	console.log('loc-list req.params:');
+var getLocalFileList = function (urlParam, callback) {
 	console.log(util.inspect(req.params));
-	var path = req.params['0']; //.replace('/', '\\');
+	var path = urlParam;
 	console.log('final path: ' + path);
 	fs.readdir(path, function (err, files) {
 		if (err) {
@@ -68,43 +70,96 @@ router.get(/^\/loc-list\/*(.*)?$/, function (req, res, next) {
 					else if (c == '*')
 						escPattern += '.*?';
 					else
-							escPattern += c;
+						escPattern += c;
 				}
 				console.log('path:' + path + " pattern: " + pattern + " escaped: " + escPattern);
 				fs.readdir(path, function (err, files) {
 					if (err) {
 						console.log(err);
-						next();
+						callback(null, err);
 					} else {
 						//console.log(util.inspect(files));
 						var matcher = new RegExp(escPattern, 'i');
-						console.log('matcher:' + matcher);
+						// console.log('matcher:' + matcher);
 						var filtFiles = [];
 						for (i in files) {
 							var file = files[i];
-							console.log('file: ' + file);
+							//console.log('file: ' + file);
 							if (file.match(matcher))
 								filtFiles.push(file);
 						}
-						res.send(filtFiles);
-						res.end();
+						callback(filtFiles);
 					}
 				});
 			} else {
 				console.log(err);
-				next();
+				callback(null, err);
 			}
 		} else {
-			console.log(util.inspect(files));
-			res.send(files);
-			res.end();
+			//	console.log(util.inspect(files));
+			callback(files);
 		}
 	});
 
+}
+
+// list local directory
+router.get(/^\/loc-list\/*(.*)?$/, function (req, res, next) {
+	//	console.log('loc-list req.params:');
+	//	console.log(util.inspect(req.params));
+	getLocalFileList(req.params['0'], function (files, err) {
+		if (files) {
+			res.send(files);
+			res.end();
+		} else
+			res.next();
+	});
 });
 
+hdfsUpload = function (localPath, localFileName, distPath, distFileName, callback) {
+	if (!distFileName || distFileName.length == 0)
+		distFileName = localFileName;
+	
+	if (distPath.slice(-1) != '/')
+		distPath+='/';
+		
+	// first request returning a redirection to definitive upload url
+	hdfs({
+		method : 'PUT',
+		uri : baseHDFS + distPath + distFileName + '?op=CREATE'
+	}, function (res1, body) {
+		//console.log(util.inspect(res1));
+		if (res1.statusCode == 307) {
+			console.log('definitive url:' + res1.headers.location);
+			// real file upload
+			fs.createReadStream(localPath + localFileName).pipe(
+				hdfs({
+					method : 'PUT',
+					uri : res1.headers.location + '?op=CREATE',
+				}).on('end', function () {
+					callback(localFileName);
+				}).on('error', function (err) {
+
+					console.log('error while uploading file\n', util.inspect(err));
+				}));
+		} else {
+			console.log('error in upload for url: ' + '\n' + res1.body);
+		}
+	});
+}
 // upload files
-router.get(/^\/upload\/*(.*)?$/, function (req, res, next) {});
+router.post(/^\/upload\/*(.*)?$/, function (req, res, next) {
+	console.log(req.body);
+	hdfsUpload('e:/tmp/', 'coucou.txt', basePath, 'hello.txt', function(file) {res.send('<h2>FILE: ' + file +' UPLOAD OK</h2>');res.end();});
+	return;
+	getLocalFileList(req.params['0'], function (files, err) {
+		if (files) {
+			res.send(files);
+			res.end();
+		} else
+			res.send('PAS DE FICHIER SELECTIONNE<br><br><br>VERIFIEZ LE CHEMIN LOCAL');
+	});
+});
 
 router.get('/', function (req, res, next) {
 	res.render('index', {

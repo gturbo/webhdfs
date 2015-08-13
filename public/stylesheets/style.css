@@ -34,13 +34,20 @@ h1 {
 	text-align: center;
 }
 
-.action {
+.action, .send  {
 	margin: 15px;
 	padding:15px;
-	background-color: #5A8B45;
 	color: #FFFFFF;
 	font-size: 30px;
 	font-weight: bold;
+}
+
+.action {
+	background-color: #5A8B45;	
+}
+
+.send {
+	background-color: #5A8B8B;
 }
 
 .lbl {
