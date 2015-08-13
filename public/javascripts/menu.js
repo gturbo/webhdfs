@@ -21,4 +21,23 @@ $(function () {
 			}
 		});
 	});
+
+
+	var locPath = $('#loc-path')[0];
+	$('#loc-list').click(function(e) {
+	$.ajax({
+		url : 'loc-list/' + locPath.value,
+		success : function (files) {
+			var txt="";
+			$.each(files, function(i,f){
+				txt+="<strong>" + f	+ "</strong><br>";
+			})
+			response.html(txt);
+		},
+		error : function (xhr, type) {
+			response.html('<h1>error in request see console</h1>');
+		}
+	});
+});
+
 })

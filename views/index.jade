@@ -3,15 +3,19 @@ extends layout
 block content
 	#main
 		#menu
-			h1= title
-			ul
-				#list list input directory
-				#other not implemented
-			br
-			h1 paramètres
+			h1 opérations distantes
 			.param
-				.lbl path:
+				.lbl Chemin:
 				input(type='text',id='path',value='#{path}') 
+			.action#list fichiers distants
+			.action.send#upload uploader la sélection
+			br
+			h1 opérations locales
+			.param
+				.lbl Chemin:
+				input(type='text',id='loc-path',value='E:\\tmp\\') 
+			.action#loc-list fichiers locaux
+			.action#other not implemented
 		#result
 			h1 réponse
 			#response 

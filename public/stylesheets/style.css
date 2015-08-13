@@ -7,28 +7,54 @@ a {
   color: #00B7FF;
 }
 
-#main > div {
-	width:50%;
+#main, .param {
+	overflow:auto;
+}
+
+#menu {
+	width: 50%;
+	max-width: 500px;
 	float: left;
 }
 
+#result {
+	min-width: 300px;
+}
+
 #response {
-	background-color: #D2FFFF;
+	background-color: #E2F2F2;
 	padding: 20px;
 	height: 500px;
 	overflow: scroll;
 	word-wrap: break-word;
+	border: solid 3px;
 }
 
 h1 {
 	text-align: center;
 }
 
-ul > div {
-	margin: 20px;
-	padding:20px;
+.action {
+	margin: 15px;
+	padding:15px;
 	background-color: #5A8B45;
 	color: #FFFFFF;
 	font-size: 30px;
 	font-weight: bold;
+}
+
+.lbl {
+	color: #5A8B45;
+	font-weight: bold;	
+}
+
+.param > * {
+	float:left;
+	margin: 15px;
+	font-size: 30px;
+}
+
+.param > input {
+	font-size: 20px;
+	margin-top: 15px;
 }
