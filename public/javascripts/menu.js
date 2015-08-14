@@ -232,5 +232,15 @@ $(function () {
 		});		
 	}
 	response.on('click', '.mkdir', mkdir);
+	response.on('click','span[data-glyph="plus"]', function(e) {
+		var dirName = $(e.target).next('span[data-glyph="delete"]').attr('dirName');
+		if(dirName) {
+			if (path.value.slice(-1) != '/')
+				path.value = path.value + '/';
+			path.value += dirName;
+			refreshList();	
+		}
+
+	});
 
 })
