@@ -7,15 +7,16 @@ block content
 			.param
 				.lbl Chemin:
 				input(type='text',id='path',value='#{path}') 
-			.action#list fichiers distants
-			.action.send#upload uploader la sélection
+			.action#list LIST
+			.send#upload UPLOAD
+			.delete#delete DELETE DIRECTORY
 			br
 			h1 opérations locales
 			.param
 				.lbl Chemin:
 				input(type='text',id='loc-path',value='E:\\tmp\\') 
-			.action#loc-list fichiers locaux
-			.action#other not implemented
+			.action#loc-list LIST LOCAL
+			.send#download DOWNLOAD
 		#result
 			h1 réponse
 			#response 

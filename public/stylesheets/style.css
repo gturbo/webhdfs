@@ -34,7 +34,7 @@ h1 {
 	text-align: center;
 }
 
-.action, .send  {
+.action, .send, .delete  {
 	margin: 15px;
 	padding:15px;
 	color: #FFFFFF;
@@ -50,6 +50,11 @@ h1 {
 	background-color: #5A8B8B;
 }
 
+.delete {
+	background-color: #FF4E4E;
+}
+
+
 .lbl {
 	color: #5A8B45;
 	font-weight: bold;	
@@ -64,4 +69,17 @@ h1 {
 .param > input {
 	font-size: 20px;
 	margin-top: 15px;
+}
+
+.red {
+	color: #FF4E4E;
+}
+
+.blue {
+	color: #5A8B8B;
+}
+
+.file, .folder {
+	font-size: 18px;
+	padding: 2px;
 }
