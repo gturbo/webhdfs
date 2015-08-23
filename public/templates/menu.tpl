@@ -17,14 +17,13 @@
 
 
 <script type="text/html" id="tplLocFile">
-<div class="file blue">
+<div name="<%=name%>"class=
 	<%if (isDir){%>
-		<div class="loc-folder"><span class="oi" data-glyph="plus">&nbsp;&nbsp;
+		"folder loc-folder green"><span class="oi" data-glyph="plus">&nbsp;&nbsp;
 	<%} else {%>
-		<div class="loc-file"><span class="oi" data-glyph="document">&nbsp;&nbsp;
+		"file green"><span class="oi" data-glyph="document">&nbsp;&nbsp;
 	<%}%>
 	<%=name%></span></div>
-</div>
 </script>
 
 <script type="text/html" id="tplFolderNotExists">

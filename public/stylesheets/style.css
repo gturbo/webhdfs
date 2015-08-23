@@ -79,6 +79,10 @@ h1 {
 	color: #5A8B8B;
 }
 
+.green {
+	color: #5A8B45;
+}
+
 .file, .folder {
 	font-size: 18px;
 	padding: 2px;
