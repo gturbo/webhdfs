@@ -5,14 +5,17 @@ var util = require('util');
 var fs = require('fs');
 var extend = util._extend;
 var async = require("async");
+var localFiles = require('local-files');
+var debug = require('debug');
+
 /* GET home page. */
 
-var baseHDFS = 'https://bi-hadoop-prod-2059.services.dal.bluemix.net:8443/gateway/default/webhdfs/v1/';
+var baseHDFS = 'https://bi-hadoop-prod-2094.services.dal.bluemix.net:8443/gateway/default/webhdfs/v1/';
 var basePath = 'user/biblumix/input';
 var baseOptions = {
 	auth : {
 		user : 'biblumix',
-		password : 'i~q052@y6jvP',
+		password : 'z@Y3~Zfw8cE4',
 		sendImmediately : true
 	}
 }
@@ -32,7 +35,7 @@ var hdfs = function (options, callback) {
 }
 
 // list distant directory through webhdfs query
-router.get(/^\/list\/*(.*)?$/, function (req, res, next) {
+router.get(/^\/list\/(.*)?$/, function (req, res, next) {
 	console.log('req.params:');
 	console.log(util.inspect(req.params));
 	//	console.log('req._parsedUrl:');
@@ -51,67 +54,19 @@ router.get(/^\/list\/*(.*)?$/, function (req, res, next) {
 	});
 });
 
-var getLocalFileList = function (path, callback) {
-	console.log('final path: ' + path);
-	fs.readdir(path, function (err, files) {
-		if (err) {
-			// try with file mask
-			if (err.errno == -4058) {
-				// not a directory entry
-				var paths = path.split('/');
-				var pattern = paths.pop();
-				path = paths.join('/');
-				var escPattern = "";
-				for (var i = 0, len = pattern.length; i < len; i++) {
-					var c = pattern[i];
-					if (c == '.' || c == ')' || c == '(' || c == '[' || c == ']' || c == '-' || c == '{' || c == '}' || c == '\\' || c == '?')
-						escPattern += '\\' + c;
-					else if (c == '*')
-						escPattern += '.*?';
-					else
-						escPattern += c;
-				}
-				//			console.log('path:' + path + " pattern: " + pattern + " escaped: " + escPattern);
-				fs.readdir(path, function (err, files) {
-					if (err) {
-						console.log(err);
-						callback(null, err);
-					} else {
-						//console.log(util.inspect(files));
-						var matcher = new RegExp(escPattern, 'i');
-						// console.log('matcher:' + matcher);
-						var filtFiles = [];
-						for (i in files) {
-							var file = files[i];
-							//console.log('file: ' + file);
-							if (file.match(matcher))
-								filtFiles.push(file);
-						}
-						callback(filtFiles);
-					}
-				});
-			} else {
-				console.log(err);
-				callback(null, err);
-			}
-		} else {
-			//	console.log(util.inspect(files));
-			callback(files);
-		}
-	});
-
-}
-
 // list local directory
-router.get(/^\/loc-list\/*(.*)?$/, function (req, res, next) {
+router.get(/^\/loc-list\/(.*)?$/, function (req, res, next) {
 	//	console.log('loc-list req.params:');
 	//	console.log(util.inspect(req.params));
-	getLocalFileList(req.params['0'], function (files, err) {
+	localFiles.getFileList(req.params['0'], function (files, err) {
+		console.log(util.inspect(files));
 		if (files) {
 			res.send(files);
 			res.end();
-		} else
-			res.next();
+		} else {
+			next(err);
+		}
+
 	});
 });
 
@@ -153,9 +108,9 @@ hdfsUpload = function (localPath, localFileName, distPath, distFileName, callbac
 	});
 }
 // upload files
-router.post(/^\/upload\/*(.*)?$/, function (req, res, next) {
+router.post(/^\/upload\/(.*)?$/, function (req, res, next) {
 	//	console.log('upload body:           ***************************\n' + util.inspect(req.body));
-	getLocalFileList(req.params['0'], function (files, err) {
+	localFiles.getFileList(req.params['0'], function (files, err) {
 		if (files && files.length) {
 			var i = files.length,
 			distPath = req.body.path,
@@ -188,11 +143,9 @@ router.post(/^\/upload\/*(.*)?$/, function (req, res, next) {
 });
 
 router.get('/', function (req, res, next) {
-	res.render('index', {
-		title : 'opérations',
-		path : basePath
-
-	});
+	console.log(__dirname);
+	res.sendFile(__dirname +'/generated/index.html');
+	//res.end();
 });
 
 // delete remote file or directory

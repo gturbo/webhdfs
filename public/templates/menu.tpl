@@ -6,16 +6,24 @@
 	<span class="oi red" data-glyph="delete" title="delete file" fileName="<%=pathSuffix%>"/>
 </div>
 </script>
-<script type="text/html" id="tplLocFile">
-<div class="file blue">
-	<span class="oi" data-glyph="document">&nbsp;&nbsp;<%=name%></span>
-</div>
-</script>
 
 <script type="text/html" id="tplFolder">
 <div class="folder">
 	<span class="oi" data-glyph="plus">&nbsp;&nbsp;<%=pathSuffix%></span>
 	<span class="oi red" data-glyph="delete" title="delete directory recursively" dirName="<%=pathSuffix%>"></span>
+</div>
+</script>
+
+
+
+<script type="text/html" id="tplLocFile">
+<div class="file blue">
+	<%if (isDir){%>
+		<div class="loc-folder"><span class="oi" data-glyph="plus">&nbsp;&nbsp;
+	<%} else {%>
+		<div class="loc-file"><span class="oi" data-glyph="document">&nbsp;&nbsp;
+	<%}%>
+	<%=name%></span></div>
 </div>
 </script>
 

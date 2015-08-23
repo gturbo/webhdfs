@@ -126,10 +126,8 @@ $(function () {
 			success : function (files) {
 				var txt = "";
 				$.each(files, function (i, f) {
-					txt += $.tpl('tplLocFile', {
-						name : f
-					});
-				})
+					txt += $.tpl('tplLocFile', f);
+				});
 				response.html(txt);
 				locPathChange.old = locPath.value;
 			},
